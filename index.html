@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Školský portál - Učebné poznámky</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --radius: 12px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
+    body { background-color: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; }
+
+    header {
+      background: var(--card-bg);
+      border-bottom: 1px solid var(--border);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .logo { font-size: 1.25rem; font-weight: 700; color: var(--primary); display: flex; align-items: center; gap: 0.5rem; }
+    
+    .nav-btn {
+      background: #eff6ff;
+      color: var(--primary);
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.2s;
+    }
+    .nav-btn:hover { background: #dbeafe; }
+
+    main { max-width: 1100px; margin: 2rem auto; padding: 0 1rem; flex: 1; width: 100%; }
+
+    .hero {
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+      color: white;
+      padding: 2.5rem 2rem;
+      border-radius: var(--radius);
+      margin-bottom: 2rem;
+      box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.2);
+    }
+    .hero h1 { font-size: 2rem; margin-bottom: 0.5rem; }
+
+    .controls {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    @media (max-width: 768px) { .controls { grid-template-columns: 1fr; } }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--card-bg);
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    input:focus, select:focus, textarea:focus { border-color: var(--primary); }
+
+    .notes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .card:hover { transform: translateY(-3px); box-shadow: 0 10px 20px -5px rgba(0,0,0,0.1); }
+
+    .badges { display: flex; gap: 0.5rem; margin-bottom: 0.75rem; }
+    .badge {
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 0.25rem 0.5rem;
+      border-radius: 6px;
+      text-transform: uppercase;
+    }
+    .badge-class { background: #e0e7ff; color: #4338ca; }
+    .badge-subject { background: #dcfce7; color: #15803d; }
+
+    .card h3 { font-size: 1.2rem; margin-bottom: 0.5rem; color: var(--text); }
+    .card p { color: var(--text-muted); font-size: 0.9rem; line-height: 1.5; margin-bottom: 1rem; }
+    
+    .card-footer {
+      border-top: 1px solid var(--border);
+      padding-top: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .btn-delete {
+      background: #fee2e2;
+      color: #dc2626;
+      border: none;
+      padding: 0.3rem 0.6rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.8rem;
+    }
+
+    /* Modal pre učiteľa */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(15, 23, 42, 0.5);
+      backdrop-filter: blur(4px);
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+    .modal.active { display: flex; }
+    
+    .modal-content {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      padding: 2rem;
+      width: 100%;
+      max-width: 500px;
+      box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
+    }
+    .modal-header { display: flex; justify-content: space-between; margin-bottom: 1.5rem; }
+    .form-group { margin-bottom: 1rem; }
+    .form-group label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.3rem; }
+
+    .btn-submit {
+      width: 100%;
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 0.75rem;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 1rem;
+    }
+    .btn-submit:hover { background: var(--primary-hover); }
+
+    .empty-state { text-align: center; padding: 3rem; color: var(--text-muted); grid-column: 1 / -1; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="logo">
+      <i class="fa-solid fa-graduation-cap"></i> Učebné poznámky
+    </div>
+    <button class="nav-btn" onclick="openModal()">
+      <i class="fa-solid fa-plus"></i> Pridať poznámku
+    </button>
+  </header>
+
+  <main>
+    <section class="hero">
+      <h1>Školské materiály & Zadania</h1>
+      <p>Vyberte svoju triedu a predmet pre zobrazenie aktuálnych učebných poznámok a úloh.</p>
+    </section>
+
+    <section class="controls">
+      <input type="text" id="search" placeholder="🔍 Vyhľadať v poznámkach..." oninput="renderNotes()">
+      
+      <select id="filterClass" onchange="renderNotes()">
+        <option value="">Všetky triedy</option>
+        <option value="5.A">5.A</option>
+        <option value="6.B">6.B</option>
+        <option value="7.A">7.A</option>
+        <option value="8.C">8.C</option>
+        <option value="9.A">9.A</option>
+      </select>
+
+      <select id="filterSubject" onchange="renderNotes()">
+        <option value="">Všetky predmety</option>
+        <option value="Matematika">Matematika</option>
+        <option value="Fyzika">Fyzika</option>
+        <option value="Dejepis">Dejepis</option>
+        <option value="Slovenský jazyk">Slovenský jazyk</option>
+        <option value="Informatika">Informatika</option>
+      </select>
+    </section>
+
+    <section id="notesContainer" class="notes-grid">
+      <!-- Poznámky sa sem vygenerujú pomocou JavaScriptu -->
+    </section>
+  </main>
+
+  <!-- MODÁLNE OKNO PRE PRIDANIE POZNÁMKY (UČITEĽ) -->
+  <div id="modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Pridať novú poznámku</h2>
+        <button style="background:none; border:none; font-size:1.5rem; cursor:pointer;" onclick="closeModal()">&times;</button>
+      </div>
+      <form id="noteForm">
+        <div class="form-group">
+          <label>Názov témy / lekcie</label>
+          <input type="text" id="title" placeholder="napr. Pythagorasova veta" required>
+        </div>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+          <div class="form-group">
+            <label>Trieda</label>
+            <select id="class" required>
+              <option value="5.A">5.A</option>
+              <option value="6.B">6.B</option>
+              <option value="7.A">7.A</option>
+              <option value="8.C">8.C</option>
+              <option value="9.A">9.A</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Predmet</label>
+            <select id="subject" required>
+              <option value="Matematika">Matematika</option>
+              <option value="Fyzika">Fyzika</option>
+              <option value="Dejepis">Dejepis</option>
+              <option value="Slovenský jazyk">Slovenský jazyk</option>
+              <option value="Informatika">Informatika</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Obsah poznámky / Pokyny pre žiakov</label>
+          <textarea id="content" rows="4" placeholder="Zhrnutie učiva, domáca úloha..." required></textarea>
+        </div>
+
+        <button type="submit" class="btn-submit">Uložiť a zverejniť</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // Vzorové počiatočné dáta
+    const initialNotes = [
+      {
+        id: 1,
+        title: "Pythagorasova veta a jej využitie",
+        class: "8.C",
+        subject: "Matematika",
+        content: "Naučte sa vzorec a² + b² = c². Na hodine budeme riešiť slovné úlohy zo strany 45.",
+        date: "08.10.2026"
+      },
+      {
+        id: 2,
+        title: "Prvá svetová vojna - príčiny",
+        class: "9.A",
+        subject: "Dejepis",
+        content: "Prečítajte si kapitolu 3. Poznamenejte si hlavné udalosti po atentáte v Sarajeve.",
+        date: "07.10.2026"
+      }
+    ];
+
+    // Načítanie z pamäte prehliadača (LocalStorage)
+    let notes = JSON.parse(localStorage.getItem('teacherNotes')) || initialNotes;
+
+    function saveNotes() {
+      localStorage.setItem('teacherNotes', JSON.stringify(notes));
+    }
+
+    function renderNotes() {
+      const container = document.getElementById('notesContainer');
+      const search = document.getElementById('search').value.toLowerCase();
+      const filterClass = document.getElementById('filterClass').value;
+      const filterSubject = document.getElementById('filterSubject').value;
+
+      const filtered = notes.filter(n => {
+        const matchesSearch = n.title.toLowerCase().includes(search) || n.content.toLowerCase().includes(search);
+        const matchesClass = !filterClass || n.class === filterClass;
+        const matchesSubject = !filterSubject || n.subject === filterSubject;
+        return matchesSearch && matchesClass && matchesSubject;
+      });
+
+      if (filtered.length === 0) {
+        container.innerHTML = `<div class="empty-state"><i class="fa-regular fa-folder-open" style="font-size:2rem; margin-bottom: 0.5rem;"></i><br>Nenašli sa žiadne poznámky.</div>`;
+        return;
+      }
+
+      container.innerHTML = filtered.map(n => `
+        <div class="card">
+          <div>
+            <div class="badges">
+              <span class="badge badge-class">${n.class}</span>
+              <span class="badge badge-subject">${n.subject}</span>
+            </div>
+            <h3>${n.title}</h3>
+            <p>${n.content}</p>
+          </div>
+          <div class="card-footer">
+            <span><i class="fa-regular fa-calendar"></i> ${n.date}</span>
+            <button class="btn-delete" onclick="deleteNote(${n.id})"><i class="fa-solid fa-trash"></i> Zmazať</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Modal správa
+    function openModal() { document.getElementById('modal').classList.add('active'); }
+    function closeModal() { document.getElementById('modal').classList.remove('active'); }
+
+    // Formulár pre pridať
+    document.getElementById('noteForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      
+      const newNote = {
+        id: Date.now(),
+        title: document.getElementById('title').value,
+        class: document.getElementById('class').value,
+        subject: document.getElementById('subject').value,
+        content: document.getElementById('content').value,
+        date: new Date().toLocaleDateString('sk-SK')
+      };
+
+      notes.unshift(newNote);
+      saveNotes();
+      renderNotes();
+      closeModal();
+      e.target.reset();
+    });
+
+    function deleteNote(id) {
+      if (confirm('Naozaj chcete túto poznámku vymazať?')) {
+        notes = notes.filter(n => n.id !== id);
+        saveNotes();
+        renderNotes();
+      }
+    }
+
+    // Prvé vykreslenie pri načítaní
+    renderNotes();
+  </script>
+</body>
+</html>
