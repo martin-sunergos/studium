@@ -219,7 +219,7 @@
     </section>
   </main>
 
-  <!-- MODÁLNE OKNO PRE PRIDANIE POZNÁMKY (UČITEĽ) -->
+  <!-- MODÁLNE OKNO PRE PRIDANIE POZNÁMKY -->
   <div id="modal" class="modal">
     <div class="modal-content">
       <div class="modal-header">
@@ -266,31 +266,22 @@
   </div>
 
   <script>
-    // Vzorové počiatočné dáta
-    const initialNotes = [
-      {
-        id: 1,
-        title: "Pythagorasova veta a jej využitie",
-        class: "8.C",
-        subject: "Matematika",
-        content: "Naučte sa vzorec a² + b² = c². Na hodine budeme riešiť slovné úlohy zo strany 45.",
-        date: "08.10.2026"
-      },
-      {
-        id: 2,
-        title: "Prvá svetová vojna - príčiny",
-        class: "9.A",
-        subject: "Dejepis",
-        content: "Prečítajte si kapitolu 3. Poznamenejte si hlavné udalosti po atentáte v Sarajeve.",
-        date: "07.10.2026"
+    // URL backendu na Renderi
+    const API_URL = 'https://studuj-backend.onrender.com/api/notes';
+
+    let notes = [];
+
+    // Načítanie poznámok z backendu
+    async function fetchNotes() {
+      try {
+        const response = await fetch(API_URL);
+        if (response.ok) {
+          notes = await response.json();
+          renderNotes();
+        }
+      } catch (err) {
+        console.error('Chyba pri načítavaní poznámok:', err);
       }
-    ];
-
-    // Načítanie z pamäte prehliadača (LocalStorage)
-    let notes = JSON.parse(localStorage.getItem('teacherNotes')) || initialNotes;
-
-    function saveNotes() {
-      localStorage.setItem('teacherNotes', JSON.stringify(notes));
     }
 
     function renderNotes() {
@@ -300,7 +291,8 @@
       const filterSubject = document.getElementById('filterSubject').value;
 
       const filtered = notes.filter(n => {
-        const matchesSearch = n.title.toLowerCase().includes(search) || n.content.toLowerCase().includes(search);
+        const matchesSearch = (n.title && n.title.toLowerCase().includes(search)) || 
+                              (n.content && n.content.toLowerCase().includes(search));
         const matchesClass = !filterClass || n.class === filterClass;
         const matchesSubject = !filterSubject || n.subject === filterSubject;
         return matchesSearch && matchesClass && matchesSubject;
@@ -315,15 +307,14 @@
         <div class="card">
           <div>
             <div class="badges">
-              <span class="badge badge-class">${n.class}</span>
-              <span class="badge badge-subject">${n.subject}</span>
+              <span class="badge badge-class">${n.class || 'Všeobecné'}</span>
+              <span class="badge badge-subject">${n.subject || 'Predmet'}</span>
             </div>
             <h3>${n.title}</h3>
             <p>${n.content}</p>
           </div>
           <div class="card-footer">
-            <span><i class="fa-regular fa-calendar"></i> ${n.date}</span>
-            <button class="btn-delete" onclick="deleteNote(${n.id})"><i class="fa-solid fa-trash"></i> Zmazať</button>
+            <span><i class="fa-regular fa-calendar"></i> ${n.created_at ? new Date(n.created_at).toLocaleDateString('sk-SK') : (n.date || '')}</span>
           </div>
         </div>
       `).join('');
@@ -333,36 +324,39 @@
     function openModal() { document.getElementById('modal').classList.add('active'); }
     function closeModal() { document.getElementById('modal').classList.remove('active'); }
 
-    // Formulár pre pridať
-    document.getElementById('noteForm').addEventListener('submit', (e) => {
+    // Odoslanie novej poznámky na backend
+    document.getElementById('noteForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       
       const newNote = {
-        id: Date.now(),
         title: document.getElementById('title').value,
         class: document.getElementById('class').value,
         subject: document.getElementById('subject').value,
-        content: document.getElementById('content').value,
-        date: new Date().toLocaleDateString('sk-SK')
+        content: document.getElementById('content').value
       };
 
-      notes.unshift(newNote);
-      saveNotes();
-      renderNotes();
-      closeModal();
-      e.target.reset();
+      try {
+        const response = await fetch(API_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(newNote)
+        });
+
+        if (response.ok) {
+          await fetchNotes(); // Obnovenie údajov z databázy
+          closeModal();
+          e.target.reset();
+        } else {
+          alert('Chyba pri ukladaní poznámky.');
+        }
+      } catch (err) {
+        console.error('Chyba pri odosielaní:', err);
+        alert('Server neodpovedá.');
+      }
     });
 
-    function deleteNote(id) {
-      if (confirm('Naozaj chcete túto poznámku vymazať?')) {
-        notes = notes.filter(n => n.id !== id);
-        saveNotes();
-        renderNotes();
-      }
-    }
-
-    // Prvé vykreslenie pri načítaní
-    renderNotes();
+    // Prvé načítanie dát zo servera pri otborení stránky
+    fetchNotes();
   </script>
 </body>
 </html>
