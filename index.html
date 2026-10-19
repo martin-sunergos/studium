@@ -1,22 +1,21 @@
 <!DOCTYPE html>
 <html lang="sk">
 <head>
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-YY2945HH6N"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-YY2945HH6N"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
 
-  gtag('config', 'G-YY2945HH6N');
-</script>
+    gtag('config', 'G-YY2945HH6N');
+  </script>
+
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Studuj.tech - Školský portál</title>
   
-  <!-- Ikona v karte prehliadača (Favicon 🎓) -->
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎓</text></svg>">
-  
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
@@ -67,6 +66,7 @@
       display: flex; align-items: center; gap: 0.4rem; font-size: 0.9rem; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);
     }
     .nav-btn:hover { background: var(--primary-hover); }
+    .btn-secondary { background: #64748b; box-shadow: none; }
     .btn-logout { background: #ef4444; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25); }
 
     main { max-width: 1200px; margin: 1.5rem auto; padding: 0 1rem; flex: 1; width: 100%; }
@@ -79,7 +79,14 @@
     .hero h1 { font-size: 1.75rem; font-weight: 700; margin-bottom: 0.5rem; }
     .hero p { font-size: 0.95rem; opacity: 0.95; line-height: 1.5; }
 
-    /* ŠTATISTIKY PANEL PRE ADMINA */
+    /* DASHBOARD & ADMIN TOOLBAR */
+    .admin-tools {
+      display: none; background: var(--card-bg); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 1rem 1.25rem; margin-bottom: 1.5rem;
+      align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem;
+    }
+    .admin-tools.active { display: flex; }
+
     .stats-container {
       display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; display: none;
     }
@@ -183,6 +190,21 @@
       <h1 id="heroTitle">Školské materiály & Zadania</h1>
       <p id="heroSubtitle">Zvoľte svoju triedu pre prístup k študijným podkladom a prílohám.</p>
     </section>
+
+    <!-- ADMIN PANEL OVERLAY / TOOLBAR -->
+    <div id="adminTools" class="admin-tools">
+      <div style="display: flex; align-items: center; gap: 0.6rem; font-weight: 600; font-size: 0.9rem;">
+        <i class="fa-solid fa-user-shield" style="color: var(--primary);"></i> Admin Režim
+      </div>
+      <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+        <button class="nav-btn btn-secondary" onclick="toggleStudentPreview()" id="previewToggleBtn">
+          <i class="fa-solid fa-eye"></i> Náhľad očami žiaka: OFF
+        </button>
+        <button class="nav-btn btn-secondary" onclick="exportDataBackup()">
+          <i class="fa-solid fa-download"></i> Export zálohy (JSON)
+        </button>
+      </div>
+    </div>
 
     <!-- 📊 ADMIN ŠTATISTIKY PANEL -->
     <section id="statsContainer" class="stats-container">
@@ -308,6 +330,7 @@
     const API_URL = 'https://studuj-backend.onrender.com/api/notes';
     let notes = [];
     let adminPassword = localStorage.getItem('adminPassword') || '';
+    let isStudentPreview = false;
 
     if (localStorage.getItem('theme') === 'dark' || (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
       document.body.classList.remove('light-theme');
@@ -331,6 +354,34 @@
       toastIcon.className = isError ? 'fa-solid fa-triangle-exclamation' : 'fa-solid fa-circle-check';
 
       setTimeout(() => { toast.classList.remove('show'); }, 3500);
+    }
+
+    function toggleStudentPreview() {
+      isStudentPreview = !isStudentPreview;
+      const btn = document.getElementById('previewToggleBtn');
+      if (isStudentPreview) {
+        btn.innerHTML = '<i class="fa-solid fa-eye-slash"></i> Náhľad očami žiaka: ON';
+        btn.style.background = '#10b981';
+        document.getElementById('adminPanel').style.display = 'none';
+        document.getElementById('statsContainer').style.display = 'none';
+      } else {
+        btn.innerHTML = '<i class="fa-solid fa-eye"></i> Náhľad očami žiaka: OFF';
+        btn.style.background = '#64748b';
+        document.getElementById('adminPanel').style.display = 'block';
+        document.getElementById('statsContainer').style.display = 'grid';
+      }
+      renderNotes();
+    }
+
+    function exportDataBackup() {
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(notes, null, 2));
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute("href", dataStr);
+      downloadAnchor.setAttribute("download", `studuj_tech_zaloha_${new Date().toISOString().slice(0,10)}.json`);
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+      showToast('Záloha databázy bola úspešne stiahnutá!');
     }
 
     function onClassChange() {
@@ -370,12 +421,14 @@
 
     function checkAdminState() {
       if (adminPassword) {
+        document.getElementById('adminTools').classList.add('active');
         document.getElementById('adminPanel').classList.add('active');
         document.getElementById('statsContainer').classList.add('active');
         document.getElementById('loginBtn').style.display = 'none';
         document.getElementById('logoutBtn').style.display = 'flex';
         updateStats();
       } else {
+        document.getElementById('adminTools').classList.remove('active');
         document.getElementById('adminPanel').classList.remove('active');
         document.getElementById('statsContainer').classList.remove('active');
         document.getElementById('loginBtn').style.display = 'flex';
@@ -392,7 +445,9 @@
       const search = document.getElementById('search').value.toLowerCase();
       const countEl = document.getElementById('resultsCount');
 
-      if (!selectedClass && !adminPassword) {
+      const isTeacherActive = adminPassword && !isStudentPreview;
+
+      if (!selectedClass && !isTeacherActive) {
         container.innerHTML = `
           <div class="empty-state">
             <i class="fa-solid fa-school" style="font-size: 2.5rem; margin-bottom: 0.75rem; color: var(--primary);"></i><br>
@@ -455,7 +510,7 @@
           <div class="card-footer">
             <span><i class="fa-regular fa-calendar"></i> ${n.created_at ? new Date(n.created_at).toLocaleDateString('sk-SK') : 'Dnes'}</span>
             <div class="card-actions">
-              ${adminPassword ? `
+              ${isTeacherActive ? `
                 <button onclick="editNote(${n.id})" title="Upraviť"><i class="fa-solid fa-pen"></i></button>
                 <button onclick="deleteNote(${n.id})" title="Zmazať" style="color:#ef4444;"><i class="fa-solid fa-trash"></i></button>
               ` : ''}
