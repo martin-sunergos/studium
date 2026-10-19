@@ -9,6 +9,7 @@
   <style>
     :root {
       --primary: #4f46e5;
+      --primary-hover: #4338ca;
       --bg: #0f172a;
       --card-bg: #1e293b;
       --text: #f8fafc;
@@ -36,6 +37,24 @@
     .logo { font-size: 1.35rem; font-weight: 700; color: var(--text); display: flex; align-items: center; gap: 0.75rem; }
     .logo i { color: var(--primary); font-size: 1.5rem; }
 
+    .nav-btn {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 0.6rem 1.25rem;
+      border-radius: 10px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.2s;
+    }
+    .nav-btn:hover { background: var(--primary-hover); }
+
+    .btn-logout { background: #ef4444; }
+    .btn-logout:hover { background: #dc2626; }
+
     main { max-width: 1200px; margin: 2.5rem auto; padding: 0 1.5rem; flex: 1; width: 100%; }
 
     .hero {
@@ -57,7 +76,7 @@
     }
     @media (max-width: 768px) { .controls { grid-template-columns: 1fr; } }
 
-    input, select {
+    input, select, textarea {
       width: 100%;
       padding: 0.85rem 1rem;
       border: 1px solid var(--border);
@@ -67,7 +86,16 @@
       font-size: 0.95rem;
       outline: none;
     }
-    input:focus, select:focus { border-color: var(--primary); }
+
+    .admin-panel {
+      background: var(--card-bg);
+      border: 2px solid var(--primary);
+      border-radius: var(--radius);
+      padding: 2rem;
+      margin-bottom: 2.5rem;
+      display: none; /* Skryté pre bežných žiakov */
+    }
+    .admin-panel.active { display: block; }
 
     .notes-grid {
       display: grid;
@@ -83,9 +111,8 @@
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      transition: all 0.3s ease;
+      position: relative;
     }
-    .card:hover { transform: translateY(-4px); border-color: rgba(79, 70, 229, 0.4); }
 
     .badges { display: flex; gap: 0.5rem; margin-bottom: 1rem; }
     .badge {
@@ -113,15 +140,47 @@
       font-size: 0.85rem;
       font-weight: 600;
       margin-bottom: 1rem;
-      transition: background 0.2s;
     }
-    .btn-download:hover { background: #1d4ed8; }
 
     .card-footer {
       border-top: 1px solid var(--border);
       padding-top: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
       font-size: 0.8rem;
       color: var(--text-muted);
+    }
+
+    .btn-delete-card {
+      background: #ef4444;
+      color: white;
+      border: none;
+      padding: 0.3rem 0.6rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.75rem;
+    }
+
+    /* Modálne okno pre prihlásenie */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(15, 23, 42, 0.8);
+      backdrop-filter: blur(8px);
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+    .modal.active { display: flex; }
+    .modal-content {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 2rem;
+      width: 100%;
+      max-width: 400px;
     }
 
     .empty-state { text-align: center; padding: 4rem 2rem; color: var(--text-muted); grid-column: 1 / -1; }
@@ -133,12 +192,47 @@
     <div class="logo">
       <i class="fa-solid fa-graduation-cap"></i> Studuj.tech
     </div>
+    <div id="authButtons">
+      <button class="nav-btn" id="loginBtn" onclick="openLoginModal()">
+        <i class="fa-solid fa-lock"></i> Učiteľské prihlásenie
+      </button>
+      <button class="nav-btn btn-logout" id="logoutBtn" style="display: none;" onclick="logout()">
+        <i class="fa-solid fa-right-from-bracket"></i> Odhlásiť sa
+      </button>
+    </div>
   </header>
 
   <main>
     <section class="hero">
       <h1>Školské materiály & Zadania</h1>
-      <p>Vyberte svoju triedu a predmet pre zobrazenie a stiahnutie aktuálnych studijných podkladov.</p>
+      <p>Vyberte svoju triedu a predmet pre zobrazenie a stiahnutie aktuálnych študijných podkladov.</p>
+    </section>
+
+    <!-- FORMULÁR PRE UČITEĽA (Zobrazí sa len po prihlásení) -->
+    <section id="adminPanel" class="admin-panel">
+      <h2 style="margin-bottom: 1rem;"><i class="fa-solid fa-pen-to-square"></i> Pridať novú poznámku / materiál</h2>
+      <form id="noteForm">
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+          <input type="text" id="title" placeholder="Názov témy / lekcie" required>
+          <select id="class" required>
+            <option value="5.A">5.A</option>
+            <option value="6.B">6.B</option>
+            <option value="7.A">7.A</option>
+            <option value="8.C">8.C</option>
+            <option value="9.A">9.A</option>
+          </select>
+          <select id="subject" required>
+            <option value="Matematika">Matematika</option>
+            <option value="Fyzika">Fyzika</option>
+            <option value="Dejepis">Dejepis</option>
+            <option value="Slovenský jazyk">Slovenský jazyk</option>
+            <option value="Informatika">Informatika</option>
+          </select>
+        </div>
+        <textarea id="content" rows="3" placeholder="Obsah / Pokyny pre žiakov..." required style="margin-bottom: 1rem;"></textarea>
+        <input type="url" id="file_url" placeholder="Odkaz na PDF / Google Drive súbor (nepovinné)" style="margin-bottom: 1rem;">
+        <button type="submit" class="nav-btn"><i class="fa-solid fa-plus"></i> Publikovať materiál</button>
+      </form>
     </section>
 
     <section class="controls">
@@ -166,9 +260,22 @@
     <section id="notesContainer" class="notes-grid"></section>
   </main>
 
+  <!-- MODÁLNE OKNO PRE PRIHLÁSENIE -->
+  <div id="loginModal" class="modal">
+    <div class="modal-content">
+      <h3 style="margin-bottom: 1rem;">Prihlásenie pre učiteľa</h3>
+      <input type="password" id="adminPasswordInput" placeholder="Zadajte admin heslo" style="margin-bottom: 1rem;">
+      <div style="display: flex; gap: 0.5rem; justify-content: flex-end;">
+        <button onclick="closeLoginModal()" style="padding: 0.5rem 1rem; background: none; border: 1px solid var(--border); color: var(--text); border-radius: 8px; cursor: pointer;">Zrušiť</button>
+        <button onclick="login()" class="nav-btn">Prihlásiť sa</button>
+      </div>
+    </div>
+  </div>
+
   <script>
     const API_URL = 'https://studuj-backend.onrender.com/api/notes';
     let notes = [];
+    let adminPassword = localStorage.getItem('adminPassword') || '';
 
     async function fetchNotes() {
       try {
@@ -178,8 +285,21 @@
           renderNotes();
         }
       } catch (err) {
-        console.error('Chyba:', err);
+        console.error('Chyba pri načítavaní:', err);
       }
+    }
+
+    function checkAdminState() {
+      if (adminPassword) {
+        document.getElementById('adminPanel').classList.add('active');
+        document.getElementById('loginBtn').style.display = 'none';
+        document.getElementById('logoutBtn').style.display = 'flex';
+      } else {
+        document.getElementById('adminPanel').classList.remove('active');
+        document.getElementById('loginBtn').style.display = 'flex';
+        document.getElementById('logoutBtn').style.display = 'none';
+      }
+      renderNotes();
     }
 
     function renderNotes() {
@@ -218,12 +338,95 @@
             ` : ''}
           </div>
           <div class="card-footer">
-            <i class="fa-regular fa-calendar"></i> ${n.created_at ? new Date(n.created_at).toLocaleDateString('sk-SK') : 'Dnes'}
+            <span><i class="fa-regular fa-calendar"></i> ${n.created_at ? new Date(n.created_at).toLocaleDateString('sk-SK') : 'Dnes'}</span>
+            ${adminPassword ? `<button class="btn-delete-card" onclick="deleteNote(${n.id})"><i class="fa-solid fa-trash"></i> Zmazať</button>` : ''}
           </div>
         </div>
       `).join('');
     }
 
+    function openLoginModal() { document.getElementById('loginModal').classList.add('active'); }
+    function closeLoginModal() { document.getElementById('loginModal').classList.remove('active'); }
+
+    async function login() {
+      const pwd = document.getElementById('adminPasswordInput').value;
+      try {
+        const res = await fetch('https://studuj-backend.onrender.com/api/verify-admin', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ password: pwd })
+        });
+
+        if (res.ok) {
+          adminPassword = pwd;
+          localStorage.setItem('adminPassword', pwd);
+          closeLoginModal();
+          checkAdminState();
+        } else {
+          alert('Nesprávne heslo!');
+        }
+      } catch (err) {
+        alert('Chyba pri overovaní.');
+      }
+    }
+
+    function logout() {
+      adminPassword = '';
+      localStorage.removeItem('adminPassword');
+      checkAdminState();
+    }
+
+    document.getElementById('noteForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const newNote = {
+        title: document.getElementById('title').value,
+        class: document.getElementById('class').value,
+        subject: document.getElementById('subject').value,
+        content: document.getElementById('content').value,
+        file_url: document.getElementById('file_url').value,
+        password: adminPassword
+      };
+
+      try {
+        const response = await fetch(API_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(newNote)
+        });
+
+        if (response.ok) {
+          await fetchNotes();
+          e.target.reset();
+        } else {
+          alert('Chyba pri ukladaní.');
+        }
+      } catch (err) {
+        alert('Server neodpovedá.');
+      }
+    });
+
+    async function deleteNote(id) {
+      if (!confirm('Naozaj chcete zmazať túto poznámku?')) return;
+
+      try {
+        const res = await fetch(`${API_URL}/${id}`, {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ password: adminPassword })
+        });
+
+        if (res.ok) {
+          await fetchNotes();
+        } else {
+          alert('Chyba pri mazaní.');
+        }
+      } catch (err) {
+        alert('Server neodpovedá.');
+      }
+    }
+
+    checkAdminState();
     fetchNotes();
   </script>
 </body>
