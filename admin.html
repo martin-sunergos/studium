@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin - Správa materiálov | Studuj.tech</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #4f46e5;
+      --bg: #0f172a;
+      --card-bg: #1e293b;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --border: #334155;
+      --radius: 16px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', system-ui, sans-serif; }
+    body { background-color: var(--bg); color: var(--text); min-height: 100vh; padding: 2rem; }
+
+    .admin-container { max-width: 900px; margin: 0 auto; }
+    header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
+
+    .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 2rem; margin-bottom: 2rem; }
+    .form-group { margin-bottom: 1.25rem; }
+    .form-group label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--text-muted); }
+
+    input, select, textarea {
+      width: 100%; padding: 0.85rem 1rem; border: 1px solid var(--border); border-radius: 10px;
+      background: #0f172a; color: var(--text); font-size: 0.95rem; outline: none;
+    }
+
+    .btn-submit { background: var(--primary); color: white; border: none; padding: 0.85rem 1.5rem; border-radius: 10px; font-weight: 600; cursor: pointer; }
+    .btn-delete { background: #ef4444; color: white; border: none; padding: 0.4rem 0.8rem; border-radius: 6px; cursor: pointer; font-size: 0.8rem; }
+
+    .note-item { display: flex; justify-content: space-between; align-items: center; padding: 1rem; border-bottom: 1px solid var(--border); }
+  </style>
+</head>
+<body>
+
+  <div class="admin-container">
+    <header>
+      <h1><i class="fa-solid fa-user-shield"></i> Učiteľský Admin Portál</h1>
+      <a href="index.html" style="color: var(--text-muted); text-decoration: none;">Zobraziť web žiakov &rarr;</a>
+    </header>
+
+    <!-- FORMULÁR PRE PRIDANIE -->
+    <div class="card">
+      <h2>Pridať novú poznámku / materiál</h2>
+      <br>
+      <form id="adminForm">
+        <div class="form-group">
+          <label>Názov lekcie</label>
+          <input type="text" id="title" placeholder="napr. Pythagorasova veta" required>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+          <div class="form-group">
+            <label>Trieda</label>
+            <select id="class" required>
+              <option value="5.A">5.A</option>
+              <option value="6.B">6.B</option>
+              <option value="7.A">7.A</option>
+              <option value="8.C">8.C</option>
+              <option value="9.A">9.A</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Predmet</label>
+            <select id="subject" required>
+              <option value="Matematika">Matematika</option>
+              <option value="Fyzika">Fyzika</option>
+              <option value="Dejepis">Dejepis</option>
+              <option value="Slovenský jazyk">Slovenský jazyk</option>
+              <option value="Informatika">Informatika</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Obsah / Pokyny pre žiakov</label>
+          <textarea id="content" rows="3" required></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>Odkaz na súbor / PDF (Google Drive / OneDrive URL - nepovinné)</label>
+          <input type="url" id="file_url" placeholder="https://drive.google.com/file/d/...">
+        </div>
+
+        <div class="form-group">
+          <label>Admin heslo</label>
+          <input type="password" id="password" required>
+        </div>
+
+        <button type="submit" class="btn-submit"><i class="fa-solid fa-plus"></i> Publikovať materiál</button>
+      </form>
+    </div>
+
+    <!-- ZOZNAM A MAZANIE -->
+    <div class="card">
+      <h2>Publikované materiály</h2>
+      <div id="adminNotesList"></div>
+    </div>
+  </div>
+
+  <script>
+    const API_URL = 'https://studuj-backend.onrender.com/api/notes';
+
+    async function loadAdminNotes() {
+      const res = await fetch(API_URL);
+      const notes = await res.json();
+      const list = document.getElementById('adminNotesList');
+      
+      list.innerHTML = notes.map(n => `
+        <div class="note-item">
+          <div>
+            <strong>[${n.class}] ${n.title}</strong> (${n.subject})
+            <br><small style="color:var(--text-muted);">${n.content}</small>
+          </div>
+          <button class="btn-delete" onclick="deleteNote(${n.id})"><i class="fa-solid fa-trash"></i> Zmazať</button>
+        </div>
+      `).join('');
+    }
+
+    document.getElementById('adminForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const data = {
+        title: document.getElementById('title').value,
+        class: document.getElementById('class').value,
+        subject: document.getElementById('subject').value,
+        content: document.getElementById('content').value,
+        file_url: document.getElementById('file_url').value,
+        password: document.getElementById('password').value
+      };
+
+      const res = await fetch(API_URL, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(data)
+      });
+
+      if (res.ok) {
+        alert('Materiál bol zverejnený!');
+        e.target.reset();
+        loadAdminNotes();
+      } else {
+        const err = await res.json();
+        alert(err.error || 'Chyba');
+      }
+    });
+
+    async function deleteNote(id) {
+      const pwd = prompt('Zadajte admin heslo pre zmazanie:');
+      if (!pwd) return;
+
+      const res = await fetch(`${API_URL}/${id}`, {
+        method: 'DELETE',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ password: pwd })
+      });
+
+      if (res.ok) {
+        loadAdminNotes();
+      } else {
+        alert('Chyba pri mazaní alebo nesprávne heslo!');
+      }
+    }
+
+    loadAdminNotes();
+  </script>
+</body>
+</html>
