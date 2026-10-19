@@ -135,9 +135,7 @@
 
           <select id="subject" required>
             <option value="">Vyberte predmet</option>
-            <option value="Matematika">Matematika</option>
-            <option value="Fyzika">Fyzika</option>
-            <option value="Dejepis">Dejepis</option>
+            <option value="Odborný výcvik">Odborný výcvik</option>
             <option value="Slovenský jazyk">Slovenský jazyk</option>
             <option value="Informatika">Informatika</option>
           </select>
@@ -167,11 +165,10 @@
 
       <select id="filterSubject" onchange="renderNotes()">
         <option value="">Všetky predmety</option>
-        <option value="Matematika">Matematika</option>
-        <option value="Fyzika">Fyzika</option>
-        <option value="Dejepis">Dejepis</option>
-        <option value="Slovenský jazyk">Slovenský jazyk</option>
-        <option value="Informatika">Informatika</option>
+        <option value="">Vyberte predmet</option>
+            <option value="Odborný výcvik">Odborný výcvik</option>
+            <option value="Slovenský jazyk">Slovenský jazyk</option>
+            <option value="Informatika">Informatika</option>
       </select>
 
       <input type="text" id="search" placeholder="🔍 Vyhľadať v lekciách..." oninput="renderNotes()">
