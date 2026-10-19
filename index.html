@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Studuj.tech - Školský portál</title>
   
-  <!-- Ikona na karte prehliadača (Favicon 🎓) -->
+  <!-- Ikona v karte prehliadača (Favicon 🎓) -->
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎓</text></svg>">
   
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -70,7 +70,19 @@
     .hero h1 { font-size: 1.75rem; font-weight: 700; margin-bottom: 0.5rem; }
     .hero p { font-size: 0.95rem; opacity: 0.95; line-height: 1.5; }
 
-    /* FILTRE & OVLÁDANIE - MOBILNÁ OPTIMALIZÁCIA */
+    /* ŠTATISTIKY PANEL PRE ADMINA */
+    .stats-container {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; display: none;
+    }
+    .stats-container.active { display: grid; }
+    .stat-card {
+      background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 1.25rem;
+      display: flex; flex-direction: column; gap: 0.4rem; box-shadow: var(--shadow);
+    }
+    .stat-card span:first-child { font-size: 0.8rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; }
+    .stat-card span:last-child { font-size: 1.5rem; font-weight: 700; color: var(--primary); }
+
+    /* FILTRE */
     .controls { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap: 0.75rem; margin-bottom: 1rem; }
     @media (max-width: 900px) { .controls { grid-template-columns: 1fr 1fr; } }
     @media (max-width: 600px) { .controls { grid-template-columns: 1fr; } }
@@ -94,8 +106,6 @@
       background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem;
       display: flex; flex-direction: column; justify-content: space-between; position: relative; box-shadow: var(--shadow);
     }
-    .card:hover { border-color: rgba(79, 70, 229, 0.4); }
-    
     .card.pinned { border: 2px solid var(--primary); background: rgba(79, 70, 229, 0.03); }
     .pin-badge {
       position: absolute; top: -12px; right: 15px; background: var(--primary); color: white;
@@ -111,21 +121,21 @@
     .card p { color: var(--text-muted); font-size: 0.9rem; line-height: 1.5; margin-bottom: 1.25rem; white-space: pre-wrap; word-break: break-word; }
     
     .file-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: auto; }
-    .btn-preview, .btn-download {
-      display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.6rem 0.9rem; border-radius: 8px;
-      font-size: 0.85rem; font-weight: 600; text-decoration: none; cursor: pointer; border: none;
+    .btn-preview, .btn-download, .btn-share {
+      display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.5rem 0.8rem; border-radius: 8px;
+      font-size: 0.8rem; font-weight: 600; text-decoration: none; cursor: pointer; border: none;
     }
     .btn-preview { background: rgba(79, 70, 229, 0.15); color: var(--primary); }
-    .btn-preview:hover { background: rgba(79, 70, 229, 0.25); }
     .btn-download { background: #2563eb; color: white; }
+    .btn-share { background: rgba(100, 116, 139, 0.15); color: var(--text-muted); }
+    .btn-share:hover { background: rgba(100, 116, 139, 0.3); color: var(--text); }
 
     .card-footer { border-top: 1px solid var(--border); padding-top: 1rem; margin-top: 1.25rem; display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; color: var(--text-muted); }
-
     .card-actions button { background: none; border: none; color: var(--text-muted); cursor: pointer; padding: 0.4rem; font-size: 0.95rem; border-radius: 6px; }
 
     .empty-state { text-align: center; padding: 4rem 1.5rem; color: var(--text-muted); grid-column: 1 / -1; font-size: 1rem; background: var(--card-bg); border: 1px dashed var(--border); border-radius: var(--radius); }
 
-    /* TOAST NOTIFIKÁCIE */
+    /* TOAST */
     #toast {
       position: fixed; bottom: 20px; right: 20px; background: #10b981; color: white; padding: 0.9rem 1.25rem;
       border-radius: 12px; font-weight: 600; font-size: 0.9rem; box-shadow: 0 10px 25px rgba(0,0,0,0.2); transform: translateY(150%);
@@ -134,11 +144,10 @@
     #toast.show { transform: translateY(0); }
     #toast.error { background: #ef4444; }
 
-    /* MODAL WINDOWS (LOGIN & PDF PREVIEW) */
+    /* MODAL */
     .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(8px); align-items: center; justify-content: center; z-index: 1000; padding: 1rem; }
     .modal.active { display: flex; animation: fadeIn 0.2s ease; }
     .modal-content { background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.75rem; width: 100%; max-width: 420px; box-shadow: var(--shadow); }
-    
     .modal-pdf { max-width: 900px; height: 85vh; display: flex; flex-direction: column; }
     .modal-pdf iframe { width: 100%; height: 100%; border: none; border-radius: 10px; margin-top: 1rem; background: white; }
 
@@ -166,7 +175,23 @@
       <p id="heroSubtitle">Zvoľte svoju triedu pre prístup k študijným podkladom a prílohám.</p>
     </section>
 
-    <!-- ADMIN PANEL FOR TEACHERS -->
+    <!-- 📊 ADMIN ŠTATISTIKY PANEL -->
+    <section id="statsContainer" class="stats-container">
+      <div class="stat-card">
+        <span>Celkovo materiálov</span>
+        <span id="statTotalNotes">0</span>
+      </div>
+      <div class="stat-card">
+        <span>Aktívnych tried</span>
+        <span id="statClassesCount">0</span>
+      </div>
+      <div class="stat-card">
+        <span>Súborov s prílohou</span>
+        <span id="statFilesCount">0</span>
+      </div>
+    </section>
+
+    <!-- ADMIN FORMULÁR -->
     <section id="adminPanel" class="admin-panel">
       <h2 style="margin-bottom: 1.25rem; font-size: 1.2rem; display: flex; align-items: center; gap: 0.6rem;" id="adminFormTitle">
         <i class="fa-solid fa-cloud-arrow-up" style="color: var(--primary);"></i> Pridať nový materiál
@@ -192,7 +217,7 @@
           </select>
         </div>
 
-        <textarea id="content" rows="3" placeholder="Popis, pokyny alebo domáca úloha pre žiakov..." required style="margin-bottom: 1rem;"></textarea>
+        <textarea id="content" rows="3" placeholder="Popis, pokyny alebo domáca úloha..." required style="margin-bottom: 1rem;"></textarea>
 
         <div style="margin-bottom: 1rem;">
           <label style="display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 0.4rem; color: var(--text-muted);">
@@ -231,8 +256,8 @@
       </select>
 
       <select id="sortBy" onchange="renderNotes()">
-        <option value="newest">Najnovšie</option>
-        <option value="oldest">Najstaršie</option>
+        <option value="newest">Najnovšie prvotne</option>
+        <option value="oldest">Najstaršie prvotne</option>
         <option value="title">Podľa názvu (A-Z)</option>
       </select>
 
@@ -259,7 +284,7 @@
     </div>
   </div>
 
-  <!-- MODAL - NÁHĽAD DOKUMENTU -->
+  <!-- MODAL - NÁHĽAD -->
   <div id="pdfModal" class="modal">
     <div class="modal-content modal-pdf">
       <div style="display: flex; justify-content: space-between; align-items: center;">
@@ -275,7 +300,6 @@
     let notes = [];
     let adminPassword = localStorage.getItem('adminPassword') || '';
 
-    // Automatická detekcia tmavej témy zo systému zariadenia
     if (localStorage.getItem('theme') === 'dark' || (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
       document.body.classList.remove('light-theme');
       document.getElementById('themeIcon').className = 'fa-solid fa-moon';
@@ -316,6 +340,7 @@
         const response = await fetch(API_URL);
         if (response.ok) {
           notes = await response.json();
+          updateStats();
           renderNotes();
         }
       } catch (err) {
@@ -323,13 +348,27 @@
       }
     }
 
+    function updateStats() {
+      if (!adminPassword) return;
+      document.getElementById('statTotalNotes').innerText = notes.length;
+      
+      const uniqueClasses = new Set(notes.map(n => n.class));
+      document.getElementById('statClassesCount').innerText = uniqueClasses.size;
+
+      const filesCount = notes.filter(n => n.file_url).length;
+      document.getElementById('statFilesCount').innerText = filesCount;
+    }
+
     function checkAdminState() {
       if (adminPassword) {
         document.getElementById('adminPanel').classList.add('active');
+        document.getElementById('statsContainer').classList.add('active');
         document.getElementById('loginBtn').style.display = 'none';
         document.getElementById('logoutBtn').style.display = 'flex';
+        updateStats();
       } else {
         document.getElementById('adminPanel').classList.remove('active');
+        document.getElementById('statsContainer').classList.remove('active');
         document.getElementById('loginBtn').style.display = 'flex';
         document.getElementById('logoutBtn').style.display = 'none';
       }
@@ -363,7 +402,6 @@
         return matchesClass && matchesSubject && matchesSearch;
       });
 
-      // Zoraďovanie
       if (sortBy === 'newest') {
         filtered.sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
       } else if (sortBy === 'oldest') {
@@ -372,9 +410,7 @@
         filtered.sort((a, b) => a.title.localeCompare(b.title));
       }
 
-      // Pripnuté oznamy ostanú vždy hore
       filtered.sort((a, b) => (b.is_pinned ? 1 : 0) - (a.is_pinned ? 1 : 0));
-
       countEl.innerText = `Nájdené materiály: ${filtered.length}`;
 
       if (filtered.length === 0) {
@@ -393,16 +429,19 @@
             <h3>${n.title}</h3>
             <p>${n.content}</p>
 
-            ${n.file_url ? `
-              <div class="file-actions">
+            <div class="file-actions">
+              ${n.file_url ? `
                 <button onclick="previewFile('${n.file_url}', '${n.title}')" class="btn-preview">
                   <i class="fa-solid fa-eye"></i> Náhľad
                 </button>
                 <a href="${n.file_url}" target="_blank" download class="btn-download">
                   <i class="fa-solid fa-file-arrow-down"></i> Stiahnuť
                 </a>
-              </div>
-            ` : ''}
+              ` : ''}
+              <button onclick="copyLink('${n.title}')" class="btn-share" title="Zdieľať tému">
+                <i class="fa-solid fa-share-nodes"></i>
+              </button>
+            </div>
           </div>
           <div class="card-footer">
             <span><i class="fa-regular fa-calendar"></i> ${n.created_at ? new Date(n.created_at).toLocaleDateString('sk-SK') : 'Dnes'}</span>
@@ -426,6 +465,11 @@
     function closePdfModal() {
       document.getElementById('pdfModal').classList.remove('active');
       document.getElementById('pdfFrame').src = '';
+    }
+
+    function copyLink(title) {
+      navigator.clipboard.writeText(window.location.href);
+      showToast(`Odkaz na tému "${title}" bol skopírovaný!`);
     }
 
     function openLoginModal() { document.getElementById('loginModal').classList.add('active'); }
