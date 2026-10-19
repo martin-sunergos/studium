@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Studuj.tech - Školský portál</title>
   
-  <!-- Ikona v karte prehliadača (Favicon 🎓) -->
+  <!-- Ikona na karte prehliadača (Favicon 🎓) -->
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎓</text></svg>">
   
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -33,13 +33,13 @@
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', system-ui, sans-serif; transition: background-color 0.2s, border-color 0.2s, transform 0.2s; }
-    body { background-color: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; }
+    body { background-color: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; -webkit-tap-highlight-color: transparent; }
 
     header {
       background: rgba(30, 41, 59, 0.85);
       backdrop-filter: blur(12px);
       border-bottom: 1px solid var(--border);
-      padding: 1.1rem 2.5rem;
+      padding: 1rem 1.5rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -47,102 +47,106 @@
     }
     body.light-theme header { background: rgba(255, 255, 255, 0.85); }
 
-    .logo { font-size: 1.4rem; font-weight: 700; color: var(--text); display: flex; align-items: center; gap: 0.75rem; }
-    .logo i { color: var(--primary); font-size: 1.6rem; }
+    .logo { font-size: 1.3rem; font-weight: 700; color: var(--text); display: flex; align-items: center; gap: 0.6rem; }
+    .logo i { color: var(--primary); font-size: 1.5rem; }
 
-    .header-actions { display: flex; gap: 0.75rem; align-items: center; }
+    .header-actions { display: flex; gap: 0.5rem; align-items: center; }
     .theme-toggle { background: var(--card-bg); border: 1px solid var(--border); color: var(--text); padding: 0.6rem 0.8rem; border-radius: 10px; cursor: pointer; }
-    .theme-toggle:hover { border-color: var(--primary); }
-
+    
     .nav-btn {
-      background: var(--primary); color: white; border: none; padding: 0.6rem 1.25rem; border-radius: 10px; font-weight: 600; cursor: pointer;
-      display: flex; align-items: center; gap: 0.5rem; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);
+      background: var(--primary); color: white; border: none; padding: 0.6rem 1rem; border-radius: 10px; font-weight: 600; cursor: pointer;
+      display: flex; align-items: center; gap: 0.4rem; font-size: 0.9rem; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);
     }
-    .nav-btn:hover { background: var(--primary-hover); transform: translateY(-1px); }
+    .nav-btn:hover { background: var(--primary-hover); }
     .btn-logout { background: #ef4444; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25); }
-    .btn-logout:hover { background: #dc2626; }
 
-    main { max-width: 1200px; margin: 2.5rem auto; padding: 0 1.5rem; flex: 1; width: 100%; }
+    main { max-width: 1200px; margin: 1.5rem auto; padding: 0 1rem; flex: 1; width: 100%; }
 
     .hero {
       background: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%);
-      color: white; padding: 3rem 2.5rem; border-radius: var(--radius); margin-bottom: 2.5rem;
-      box-shadow: 0 20px 30px -10px rgba(79, 70, 229, 0.3);
+      color: white; padding: 2rem 1.5rem; border-radius: var(--radius); margin-bottom: 1.5rem;
+      box-shadow: 0 15px 25px -5px rgba(79, 70, 229, 0.25);
     }
-    .hero h1 { font-size: 2.25rem; font-weight: 700; margin-bottom: 0.75rem; }
-    .hero p { font-size: 1.05rem; opacity: 0.9; max-width: 600px; line-height: 1.6; }
+    .hero h1 { font-size: 1.75rem; font-weight: 700; margin-bottom: 0.5rem; }
+    .hero p { font-size: 0.95rem; opacity: 0.95; line-height: 1.5; }
 
-    .controls { display: grid; grid-template-columns: 1.5fr 1fr 1.5fr; gap: 1rem; margin-bottom: 1.5rem; }
-    @media (max-width: 768px) { .controls { grid-template-columns: 1fr; } }
+    /* FILTRE & OVLÁDANIE - MOBILNÁ OPTIMALIZÁCIA */
+    .controls { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap: 0.75rem; margin-bottom: 1rem; }
+    @media (max-width: 900px) { .controls { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 600px) { .controls { grid-template-columns: 1fr; } }
 
     input, select, textarea {
-      width: 100%; padding: 0.9rem 1rem; border: 1px solid var(--border); border-radius: 12px;
+      width: 100%; padding: 0.85rem 1rem; border: 1px solid var(--border); border-radius: 12px;
       background: var(--card-bg); color: var(--text); font-size: 0.95rem; outline: none; box-shadow: 0 2px 4px rgba(0,0,0,0.02);
     }
     input:focus, select:focus, textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15); }
 
     .admin-panel {
-      background: var(--card-bg); border: 2px solid var(--primary); border-radius: var(--radius); padding: 2.5rem; margin-bottom: 2.5rem; display: none; box-shadow: var(--shadow);
+      background: var(--card-bg); border: 2px solid var(--primary); border-radius: var(--radius); padding: 1.5rem; margin-bottom: 2rem; display: none; box-shadow: var(--shadow);
     }
     .admin-panel.active { display: block; animation: fadeIn 0.3s ease; }
 
-    .results-info { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1.5rem; font-weight: 500; display: flex; justify-content: space-between; align-items: center; }
+    .results-info { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.25rem; font-weight: 500; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; }
 
-    .notes-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 1.75rem; }
+    .notes-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.25rem; }
 
     .card {
-      background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 2rem;
+      background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem;
       display: flex; flex-direction: column; justify-content: space-between; position: relative; box-shadow: var(--shadow);
     }
-    .card:hover { transform: translateY(-4px); border-color: rgba(79, 70, 229, 0.4); }
+    .card:hover { border-color: rgba(79, 70, 229, 0.4); }
     
-    .card.pinned { border: 2px solid var(--primary); }
+    .card.pinned { border: 2px solid var(--primary); background: rgba(79, 70, 229, 0.03); }
     .pin-badge {
-      position: absolute; top: -12px; right: 20px; background: var(--primary); color: white;
-      padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.75rem; font-weight: 700; box-shadow: 0 4px 10px rgba(79,70,229,0.3);
+      position: absolute; top: -12px; right: 15px; background: var(--primary); color: white;
+      padding: 0.25rem 0.65rem; border-radius: 20px; font-size: 0.7rem; font-weight: 700; box-shadow: 0 4px 10px rgba(79,70,229,0.3);
     }
 
-    .badges { display: flex; gap: 0.5rem; margin-bottom: 1.25rem; }
-    .badge { font-size: 0.75rem; font-weight: 700; padding: 0.35rem 0.75rem; border-radius: 8px; text-transform: uppercase; letter-spacing: 0.03em; }
+    .badges { display: flex; gap: 0.4rem; margin-bottom: 1rem; flex-wrap: wrap; }
+    .badge { font-size: 0.7rem; font-weight: 700; padding: 0.3rem 0.6rem; border-radius: 8px; text-transform: uppercase; letter-spacing: 0.03em; }
     .badge-class { background: rgba(99, 102, 241, 0.15); color: #6366f1; }
     .badge-subject { background: rgba(34, 197, 94, 0.15); color: #16a34a; }
 
-    .card h3 { font-size: 1.3rem; font-weight: 600; margin-bottom: 0.75rem; color: var(--text); }
-    .card p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.6; margin-bottom: 1.5rem; white-space: pre-wrap; }
+    .card h3 { font-size: 1.15rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--text); }
+    .card p { color: var(--text-muted); font-size: 0.9rem; line-height: 1.5; margin-bottom: 1.25rem; white-space: pre-wrap; word-break: break-word; }
     
-    .btn-download {
-      display: inline-flex; align-items: center; gap: 0.6rem; background: #2563eb; color: white;
-      text-decoration: none; padding: 0.7rem 1.2rem; border-radius: 10px; font-size: 0.9rem; font-weight: 600; margin-top: auto;
-      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+    .file-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: auto; }
+    .btn-preview, .btn-download {
+      display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.6rem 0.9rem; border-radius: 8px;
+      font-size: 0.85rem; font-weight: 600; text-decoration: none; cursor: pointer; border: none;
     }
-    .btn-download:hover { background: #1d4ed8; }
+    .btn-preview { background: rgba(79, 70, 229, 0.15); color: var(--primary); }
+    .btn-preview:hover { background: rgba(79, 70, 229, 0.25); }
+    .btn-download { background: #2563eb; color: white; }
 
-    .card-footer { border-top: 1px solid var(--border); padding-top: 1.25rem; margin-top: 1.5rem; display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; color: var(--text-muted); }
+    .card-footer { border-top: 1px solid var(--border); padding-top: 1rem; margin-top: 1.25rem; display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; color: var(--text-muted); }
 
-    .card-actions button { background: none; border: none; color: var(--text-muted); cursor: pointer; padding: 0.4rem; font-size: 1rem; border-radius: 6px; }
-    .card-actions button:hover { background: rgba(0,0,0,0.05); color: var(--text); }
+    .card-actions button { background: none; border: none; color: var(--text-muted); cursor: pointer; padding: 0.4rem; font-size: 0.95rem; border-radius: 6px; }
 
-    .empty-state { text-align: center; padding: 5rem 2rem; color: var(--text-muted); grid-column: 1 / -1; font-size: 1.1rem; background: var(--card-bg); border: 1px dashed var(--border); border-radius: var(--radius); }
+    .empty-state { text-align: center; padding: 4rem 1.5rem; color: var(--text-muted); grid-column: 1 / -1; font-size: 1rem; background: var(--card-bg); border: 1px dashed var(--border); border-radius: var(--radius); }
 
     /* TOAST NOTIFIKÁCIE */
     #toast {
-      position: fixed; bottom: 25px; right: 25px; background: #10b981; color: white; padding: 1rem 1.5rem;
-      border-radius: 12px; font-weight: 600; box-shadow: 0 10px 25px rgba(0,0,0,0.2); transform: translateY(150%);
-      transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 2000; display: flex; align-items: center; gap: 0.75rem;
+      position: fixed; bottom: 20px; right: 20px; background: #10b981; color: white; padding: 0.9rem 1.25rem;
+      border-radius: 12px; font-weight: 600; font-size: 0.9rem; box-shadow: 0 10px 25px rgba(0,0,0,0.2); transform: translateY(150%);
+      transition: transform 0.3s ease; z-index: 2000; display: flex; align-items: center; gap: 0.6rem; max-width: 90vw;
     }
     #toast.show { transform: translateY(0); }
     #toast.error { background: #ef4444; }
 
-    .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(8px); align-items: center; justify-content: center; z-index: 1000; }
+    /* MODAL WINDOWS (LOGIN & PDF PREVIEW) */
+    .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(8px); align-items: center; justify-content: center; z-index: 1000; padding: 1rem; }
     .modal.active { display: flex; animation: fadeIn 0.2s ease; }
-    .modal-content { background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 2.5rem; width: 100%; max-width: 420px; box-shadow: var(--shadow); }
+    .modal-content { background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.75rem; width: 100%; max-width: 420px; box-shadow: var(--shadow); }
+    
+    .modal-pdf { max-width: 900px; height: 85vh; display: flex; flex-direction: column; }
+    .modal-pdf iframe { width: 100%; height: 100%; border: none; border-radius: 10px; margin-top: 1rem; background: white; }
 
     @keyframes fadeIn { from { opacity: 0; transform: scale(0.97); } to { opacity: 1; transform: scale(1); } }
   </style>
 </head>
 <body class="light-theme">
 
-  <!-- TOAST NOTIFIKÁCIA -->
   <div id="toast"><i class="fa-solid fa-circle-check" id="toastIcon"></i> <span id="toastMsg">Správa</span></div>
 
   <header>
@@ -151,7 +155,7 @@
     </div>
     <div class="header-actions">
       <button class="theme-toggle" onclick="toggleTheme()" title="Prepnúť vzhľad"><i class="fa-solid fa-sun" id="themeIcon"></i></button>
-      <button class="nav-btn" id="loginBtn" onclick="openLoginModal()"><i class="fa-solid fa-lock"></i> Prihlásiť sa</button>
+      <button class="nav-btn" id="loginBtn" onclick="openLoginModal()"><i class="fa-solid fa-lock"></i> Prihlásiť</button>
       <button class="nav-btn btn-logout" id="logoutBtn" style="display: none;" onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i> Odhlásiť</button>
     </div>
   </header>
@@ -159,17 +163,17 @@
   <main>
     <section class="hero">
       <h1 id="heroTitle">Školské materiály & Zadania</h1>
-      <p id="heroSubtitle">Vyberte svoju triedu vo filtri nižšie pre zobrazenie aktuálnych učebných podkladov.</p>
+      <p id="heroSubtitle">Zvoľte svoju triedu pre prístup k študijným podkladom a prílohám.</p>
     </section>
 
-    <!-- ADMIN PANEL -->
+    <!-- ADMIN PANEL FOR TEACHERS -->
     <section id="adminPanel" class="admin-panel">
-      <h2 style="margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.75rem;" id="adminFormTitle">
+      <h2 style="margin-bottom: 1.25rem; font-size: 1.2rem; display: flex; align-items: center; gap: 0.6rem;" id="adminFormTitle">
         <i class="fa-solid fa-cloud-arrow-up" style="color: var(--primary);"></i> Pridať nový materiál
       </h2>
       <form id="noteForm">
         <input type="hidden" id="editNoteId">
-        <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 1rem; margin-bottom: 1.25rem;">
+        <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 0.75rem; margin-bottom: 1rem;" class="admin-grid">
           <input type="text" id="title" placeholder="Názov témy / lekcie" required>
           
           <select id="class" required>
@@ -188,23 +192,23 @@
           </select>
         </div>
 
-        <textarea id="content" rows="4" placeholder="Podrobný popis, pokyny alebo domáca úloha pre žiakov..." required style="margin-bottom: 1.25rem;"></textarea>
+        <textarea id="content" rows="3" placeholder="Popis, pokyny alebo domáca úloha pre žiakov..." required style="margin-bottom: 1rem;"></textarea>
 
-        <div style="margin-bottom: 1.25rem;">
-          <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--text-muted);">
-            Priložiť súbor z počítača (PDF, Word, Obrázok...)
+        <div style="margin-bottom: 1rem;">
+          <label style="display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 0.4rem; color: var(--text-muted);">
+            Priložiť súbor z počítača (PDF, DOCX, Obrázok)
           </label>
-          <input type="file" id="fileInput" style="background: var(--card-bg); padding: 0.7rem; border: 1px dashed var(--border); border-radius: 12px; cursor: pointer;">
+          <input type="file" id="fileInput" style="background: var(--card-bg); padding: 0.6rem; border: 1px dashed var(--border); border-radius: 10px; cursor: pointer;">
         </div>
 
-        <div style="margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.75rem;">
+        <div style="margin-bottom: 1.25rem; display: flex; align-items: center; gap: 0.6rem;">
           <input type="checkbox" id="is_pinned" style="width: 18px; height: 18px; accent-color: var(--primary);">
-          <label for="is_pinned" style="font-weight: 500; cursor: pointer;">📌 Pripnúť tento oznam na samý vrch stránky</label>
+          <label for="is_pinned" style="font-weight: 500; cursor: pointer; font-size: 0.9rem;">📌 Pripnúť tento oznam na vrch</label>
         </div>
 
-        <div style="display: flex; gap: 1rem;">
+        <div style="display: flex; gap: 0.75rem;">
           <button type="submit" class="nav-btn" id="saveNoteBtn"><i class="fa-solid fa-plus"></i> Publikovať materiál</button>
-          <button type="button" class="nav-btn" id="cancelEditBtn" style="display: none; background: #64748b;" onclick="resetForm()">Zrušiť úpravu</button>
+          <button type="button" class="nav-btn" id="cancelEditBtn" style="display: none; background: #64748b;" onclick="resetForm()">Zrušiť</button>
         </div>
       </form>
     </section>
@@ -226,7 +230,13 @@
         <option value="Informatika">Informatika</option>
       </select>
 
-      <input type="text" id="search" placeholder="🔍 Vyhľadať v lekciách..." oninput="renderNotes()">
+      <select id="sortBy" onchange="renderNotes()">
+        <option value="newest">Najnovšie prvotne</option>
+        <option value="oldest">Najstaršie prvotne</option>
+        <option value="title">Podľa názvu (A-Z)</option>
+      </select>
+
+      <input type="text" id="search" placeholder="🔍 Vyhľadať..." oninput="renderNotes()">
     </section>
 
     <div class="results-info">
@@ -240,12 +250,23 @@
   <!-- MODAL - PRIHLÁSENIE -->
   <div id="loginModal" class="modal">
     <div class="modal-content">
-      <h3 style="margin-bottom: 1.25rem; font-size: 1.25rem;"><i class="fa-solid fa-lock" style="color: var(--primary);"></i> Učiteľské prihlásenie</h3>
-      <input type="password" id="adminPasswordInput" placeholder="Zadajte admin heslo" style="margin-bottom: 1.25rem;">
-      <div style="display: flex; gap: 0.75rem; justify-content: flex-end;">
-        <button onclick="closeLoginModal()" style="padding: 0.6rem 1.2rem; background: none; border: 1px solid var(--border); color: var(--text); border-radius: 10px; cursor: pointer; font-weight: 500;">Zrušiť</button>
+      <h3 style="margin-bottom: 1rem; font-size: 1.15rem;"><i class="fa-solid fa-lock" style="color: var(--primary);"></i> Učiteľské prihlásenie</h3>
+      <input type="password" id="adminPasswordInput" placeholder="Zadajte admin heslo" style="margin-bottom: 1rem;">
+      <div style="display: flex; gap: 0.5rem; justify-content: flex-end;">
+        <button onclick="closeLoginModal()" style="padding: 0.6rem 1rem; background: none; border: 1px solid var(--border); color: var(--text); border-radius: 8px; cursor: pointer;">Zrušiť</button>
         <button onclick="login()" class="nav-btn">Prihlásiť sa</button>
       </div>
+    </div>
+  </div>
+
+  <!-- MODAL - NÁHĽAD DOKUMENTU -->
+  <div id="pdfModal" class="modal">
+    <div class="modal-content modal-pdf">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <h3 id="pdfTitle" style="font-size: 1.05rem;">Náhľad prílohy</h3>
+        <button onclick="closePdfModal()" style="background: none; border: none; color: var(--text); font-size: 1.25rem; cursor: pointer;"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <iframe id="pdfFrame" src=""></iframe>
     </div>
   </div>
 
@@ -253,6 +274,19 @@
     const API_URL = 'https://studuj-backend.onrender.com/api/notes';
     let notes = [];
     let adminPassword = localStorage.getItem('adminPassword') || '';
+
+    // Automatická detekcia tmavej témy zo systému zariadenia
+    if (localStorage.getItem('theme') === 'dark' || (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      document.body.classList.remove('light-theme');
+      document.getElementById('themeIcon').className = 'fa-solid fa-moon';
+    }
+
+    function toggleTheme() {
+      document.body.classList.toggle('light-theme');
+      const isLight = document.body.classList.contains('light-theme');
+      document.getElementById('themeIcon').className = isLight ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+      localStorage.setItem('theme', isLight ? 'light' : 'dark');
+    }
 
     function showToast(message, isError = false) {
       const toast = document.getElementById('toast');
@@ -266,23 +300,11 @@
       setTimeout(() => { toast.classList.remove('show'); }, 3500);
     }
 
-    function toggleTheme() {
-      document.body.classList.toggle('light-theme');
-      const isLight = document.body.classList.contains('light-theme');
-      document.getElementById('themeIcon').className = isLight ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
-      localStorage.setItem('theme', isLight ? 'light' : 'dark');
-    }
-
-    if (localStorage.getItem('theme') === 'dark') {
-      document.body.classList.remove('light-theme');
-      document.getElementById('themeIcon').className = 'fa-solid fa-moon';
-    }
-
     function onClassChange() {
       const cls = document.getElementById('filterClass').value;
       const indicator = document.getElementById('activeClassIndicator');
       if (cls) {
-        indicator.innerHTML = `<i class="fa-solid fa-filter"></i> Filtruje sa trieda: <strong>${cls}</strong>`;
+        indicator.innerHTML = `<i class="fa-solid fa-filter"></i> Trieda: <strong>${cls}</strong>`;
       } else {
         indicator.innerHTML = '';
       }
@@ -318,15 +340,16 @@
       const container = document.getElementById('notesContainer');
       const selectedClass = document.getElementById('filterClass').value;
       const filterSubject = document.getElementById('filterSubject').value;
+      const sortBy = document.getElementById('sortBy').value;
       const search = document.getElementById('search').value.toLowerCase();
       const countEl = document.getElementById('resultsCount');
 
       if (!selectedClass && !adminPassword) {
         container.innerHTML = `
           <div class="empty-state">
-            <i class="fa-solid fa-school" style="font-size: 3rem; margin-bottom: 1rem; color: var(--primary);"></i><br>
-            <strong>Prosím, vyberte svoju triedu v hornom filtri.</strong><br>
-            <span style="font-size: 0.9rem;">Po výbere sa vám okamžite sprístupnia učebné materiály.</span>
+            <i class="fa-solid fa-school" style="font-size: 2.5rem; margin-bottom: 0.75rem; color: var(--primary);"></i><br>
+            <strong>Vyberte svoju triedu hore vo filtri.</strong><br>
+            <span style="font-size: 0.85rem;">Zobrazia sa vám podklady pre vašu triedu.</span>
           </div>
         `;
         countEl.innerText = 'Čaká sa na výber triedy';
@@ -340,12 +363,22 @@
         return matchesClass && matchesSubject && matchesSearch;
       });
 
+      // Zoraďovanie
+      if (sortBy === 'newest') {
+        filtered.sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
+      } else if (sortBy === 'oldest') {
+        filtered.sort((a, b) => new Date(a.created_at || 0) - new Date(b.created_at || 0));
+      } else if (sortBy === 'title') {
+        filtered.sort((a, b) => a.title.localeCompare(b.title));
+      }
+
+      // Pripnuté oznamy ostanú vždy hore
       filtered.sort((a, b) => (b.is_pinned ? 1 : 0) - (a.is_pinned ? 1 : 0));
 
-      countEl.innerText = `Nájdené záznamy: ${filtered.length}`;
+      countEl.innerText = `Nájdené materiály: ${filtered.length}`;
 
       if (filtered.length === 0) {
-        container.innerHTML = `<div class="empty-state"><i class="fa-regular fa-folder-open" style="font-size: 2.5rem; margin-bottom: 0.75rem;"></i><br>Pre zvolenú triedu zatiaľ nie sú žiadne materiály.</div>`;
+        container.innerHTML = `<div class="empty-state"><i class="fa-regular fa-folder-open" style="font-size: 2rem; margin-bottom: 0.5rem;"></i><br>Žiadne dostupné materiály.</div>`;
         return;
       }
 
@@ -361,9 +394,14 @@
             <p>${n.content}</p>
 
             ${n.file_url ? `
-              <a href="${n.file_url}" target="_blank" class="btn-download">
-                <i class="fa-solid fa-file-arrow-down"></i> Stiahnuť prílohu
-              </a>
+              <div class="file-actions">
+                <button onclick="previewFile('${n.file_url}', '${n.title}')" class="btn-preview">
+                  <i class="fa-solid fa-eye"></i> Náhľad
+                </button>
+                <a href="${n.file_url}" target="_blank" download class="btn-download">
+                  <i class="fa-solid fa-file-arrow-down"></i> Stiahnuť
+                </a>
+              </div>
             ` : ''}
           </div>
           <div class="card-footer">
@@ -377,6 +415,17 @@
           </div>
         </div>
       `).join('');
+    }
+
+    function previewFile(url, title) {
+      document.getElementById('pdfTitle').innerText = title || 'Náhľad prílohy';
+      document.getElementById('pdfFrame').src = url;
+      document.getElementById('pdfModal').classList.add('active');
+    }
+
+    function closePdfModal() {
+      document.getElementById('pdfModal').classList.remove('active');
+      document.getElementById('pdfFrame').src = '';
     }
 
     function openLoginModal() { document.getElementById('loginModal').classList.add('active'); }
@@ -395,7 +444,7 @@
         localStorage.setItem('adminPassword', pwd);
         closeLoginModal();
         checkAdminState();
-        showToast('Úspešne prihlásený ako učiteľ!');
+        showToast('Prihlásenie bolo úspešné!');
       } else {
         showToast('Nesprávne heslo!', true);
       }
